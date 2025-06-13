@@ -1,0 +1,48 @@
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.thumbnail {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.date {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.categories {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.category {
+  background: #f0f0f0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.content {
+  line-height: 1.8;
+  color: #444;
+} 

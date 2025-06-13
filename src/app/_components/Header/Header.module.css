@@ -1,0 +1,42 @@
+.AppHeader {
+  background-color: #282c34;
+  padding: 1rem 0;
+  color: white;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 1rem;
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #61dafb;
+} 
