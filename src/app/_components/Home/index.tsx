@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import classes from "./Home.module.css";
-import { Post } from '../../data/posts';
+import { Post } from '../../_data/posts';
 
 export const Home: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
