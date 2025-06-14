@@ -4,7 +4,30 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import classes from "./Home.module.css";
-import { Post } from '../../_data/posts';
+
+interface Category {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  revisedAt: string;
+}
+
+interface Thumbnail {
+  url: string;
+  height: number;
+  width: number;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  categories: Category[];
+  thumbnail: Thumbnail;
+}
 
 export const Home: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -12,22 +35,24 @@ export const Home: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetcher = async () => {
       try {
-        const response = await fetch('https://1hmfpsvto6.execute-api.ap-northeast-1.amazonaws.com/dev/posts');
-        if (!response.ok) {
-          throw new Error('記事の取得に失敗しました');
-        }
-        const data = await response.json();
-        setPosts(data.posts || []);
-      } catch (err: any) {
+        const res = await fetch('https://zrntmapmln.microcms.io/api/v1/posts', {
+          headers: {
+            'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string,
+          },
+        });
+        const { contents } = await res.json();
+        setPosts(contents);
+      } catch (err) {
+        setError('記事の取得に失敗しました');
         console.error('Error fetching posts:', err);
-        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchPosts();
+
+    fetcher();
   }, []);
 
   if (loading) {
@@ -50,10 +75,10 @@ export const Home: React.FC = () => {
           <Link href={`/posts/${post.id}`} key={post.id} className={classes.postLink}>
             <article className={classes.postCard}>
               <Image
-                src={post.thumbnailUrl}
+                src={post.thumbnail.url}
                 alt={post.title}
-                width={300}
-                height={200}
+                width={post.thumbnail.width}
+                height={post.thumbnail.height}
                 className={classes.postThumbnail}
               />
               <div className={classes.postContainer}>
@@ -61,8 +86,10 @@ export const Home: React.FC = () => {
                   <h2 className={classes.postTitle}>{post.title}</h2>
                   <time>{new Date(post.createdAt).toLocaleDateString('ja-JP')}</time>
                   <div className={classes.categories}>
-                    {post.categories.map((category: string) => (
-                      <span key={category} className={classes.category}>{category}</span>
+                    {post.categories.map((category) => (
+                      <span key={category.id} className={classes.category}>
+                        {category.name}
+                      </span>
                     ))}
                   </div>
                   <div 

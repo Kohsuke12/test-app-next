@@ -1,75 +1,97 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import classes from './PostDetail.module.css';
-import { Post } from '../../data/posts';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import styles from "./PostDetail.module.css";
 
-interface PostDetailProps {
+interface Category {
   id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  revisedAt: string;
 }
 
-export const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
+interface Thumbnail {
+  url: string;
+  height: number;
+  width: number;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  categories: Category[];
+  thumbnail: Thumbnail;
+}
+
+export const PostDetail: React.FC<{ id: string }> = ({ id }) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetcher = async () => {
       try {
-        const response = await fetch(`https://1hmfpsvto6.execute-api.ap-northeast-1.amazonaws.com/dev/posts/${id}`);
-        if (!response.ok) {
-          throw new Error('記事の取得に失敗しました');
-        }
-        const data = await response.json();
-        setPost(data.post || null);
-      } catch (err: any) {
+        const res = await fetch(`https://zrntmapmln.microcms.io/api/v1/posts/${id}`, {
+          headers: {
+            'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string,
+          },
+        });
+        const data = await res.json();
+        setPost(data);
+      } catch (err) {
+        setError('記事の取得に失敗しました');
         console.error('Error fetching post:', err);
-        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPost();
+    fetcher();
   }, [id]);
 
   if (loading) {
-    return <div className={classes.container}>読み込み中...</div>;
+    return <div className={styles.container}>読み込み中...</div>;
   }
 
   if (error) {
-    return <div className={classes.container}>エラー: {error}</div>;
+    return <div className={styles.container}>エラー: {error}</div>;
   }
 
   if (!post) {
-    return <div className={classes.container}>記事が見つかりませんでした。</div>;
+    return <div className={styles.container}>記事が見つかりませんでした。</div>;
   }
 
   return (
-    <div className={classes.container}>
-      <h1 className={classes.title}>{post.title}</h1>
-      <Image
-        src={post.thumbnailUrl}
-        alt={post.title}
-        width={800}
-        height={400}
-        className={classes.thumbnail}
-      />
-      <div className={classes.metadata}>
-        <time className={classes.date}>
-          {new Date(post.createdAt).toLocaleDateString('ja-JP')}
-        </time>
-        <div className={classes.categories}>
-          {(post.categories || []).map((category: string) => (
-            <span key={category} className={classes.category}>{category}</span>
+    <article className={styles.container}>
+      <h1 className={styles.title}>{post.title}</h1>
+      <div className={styles.meta}>
+        <time>{new Date(post.createdAt).toLocaleDateString('ja-JP')}</time>
+        <div className={styles.categories}>
+          {post.categories.map((category) => (
+            <span key={category.id} className={styles.category}>
+              {category.name}
+            </span>
           ))}
         </div>
       </div>
+      <div className={styles.thumbnail}>
+        <Image
+          src={post.thumbnail.url}
+          alt={post.title}
+          width={post.thumbnail.width}
+          height={post.thumbnail.height}
+          className={styles.image}
+        />
+      </div>
       <div 
-        className={classes.content}
+        className={styles.content}
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
-    </div>
+    </article>
   );
 }; 
