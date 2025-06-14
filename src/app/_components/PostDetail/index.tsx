@@ -3,33 +3,10 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "./PostDetail.module.css";
-
-interface Category {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  revisedAt: string;
-}
-
-interface Thumbnail {
-  url: string;
-  height: number;
-  width: number;
-}
-
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  categories: Category[];
-  thumbnail: Thumbnail;
-}
+import { MicroCmsPost } from "../../types/MicroCmsPost";
 
 export const PostDetail: React.FC<{ id: string }> = ({ id }) => {
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<MicroCmsPost | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +15,7 @@ export const PostDetail: React.FC<{ id: string }> = ({ id }) => {
       try {
         const res = await fetch(`https://zrntmapmln.microcms.io/api/v1/posts/${id}`, {
           headers: {
-            'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string,
+            'X-MICROCMS-API-KEY': 'TKk3CoAbQDpYVj38TQmVmhcPUy7PyvSAzOgf',
           },
         });
         const data = await res.json();
